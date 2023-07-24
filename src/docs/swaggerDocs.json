@@ -1,0 +1,480 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "starter Nodejs with typescript",
+    "license": {
+      "name": "ayoub jemai",
+      "url": "https://gitlab.com/jem3ii/node-ts-starter"
+    },
+    "description": "some stars if u like my starter 😁😁",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api/v1"
+    }
+  ],
+  "paths": {
+    "/updateMe": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "update the authenticated user Information",
+        "description": "user are alloawed just to change his photo name and email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "list all ths users",
+        "description": "only the admin who can get all the users",
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "401": {
+            "description": "you can't not acces this route"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login to the system",
+        "description": "get The user with all his comment and his publlication",
+        "tags": ["User"],
+        "parameters": [],
+        "requestBody": {
+          "description": "User credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Incorrrect email or password"
+          },
+          "404": {
+            "description": "pls provide email or passsword"
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Signup to the system",
+        "description": "Signup new User",
+        "tags": ["User"],
+        "parameters": [],
+        "requestBody": {
+          "description": "User credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignUp"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "crated with `Token` and user information"
+          },
+          "400": {
+            "description": "bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Duplicate field value {fieldValue}. Please use another value!"
+                        },
+                        "message2": {
+                          "type": "string",
+                          "example": "Invalid input data. Validator failed for path `confirmPassword` with value {password}"
+                        },
+                        "message3": {
+                          "type": "string",
+                          "example": "missing  input data"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Retrieve user information by ID",
+        "description": "NB:` only admin who can retrieve users information `",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the user to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user successfully with example",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSignUp"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are not logged in! Please log in to get access."
+          },
+          "404": {
+            "description": "Invalid Id"
+          }
+        }
+      },
+      "patch": {
+        "summary": "update user information",
+        "description": "NB:` only admin who can update users information `",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the user to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "user filed modfied",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userModified"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "user successfully with example",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSignUp"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are not logged in! Please log in to get access."
+          },
+          "404": {
+            "description": "Invalid Id"
+          }
+        }
+      }
+    },
+    "/forgetPassword": {
+      "post": {
+        "summary": "get password token for change the password",
+        "description": "if the user get all publication he will not see banned or the wating pub publication",
+        "tags": ["ChangePassword"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/forgortPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "all Publication"
+          },
+          "400": {
+            "description": "Missing data (title or description)"
+          },
+          "401": {
+            "description": "unthorized"
+          }
+        }
+      }
+    },
+    "/resetPassword/{token}": {
+      "patch": {
+        "summary": "change your passwordd by the token of the given /forgortPassword route",
+        "description": "the token only valid for 10 min",
+        "tags": ["ChangePassword"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "user filed modfied",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/restPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "password change successful"
+          },
+          "400": {
+            "description": "invalid token or expired token"
+          }
+        }
+      }
+    },
+    "/refresh": {
+      "post": {
+        "summary": "get new refrech token after the expire the access token",
+        "description": "if the rerech token is expired it must login again",
+        "tags": ["token"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/refresh"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "seccess token"
+          },
+          "400": {
+            "description": "expired token"
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "summary": "get the authenticated user",
+        "description": "get the user information with the password",
+        "tags": ["User"],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": {
+            "description": "You are not logged in! Please log in to get access. "
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "summary": "contonue with google auth",
+        "description": "with google  auth `https://console.cloud.google.com/` send just the accesToken that are provided by google auth",
+        "tags": ["User"],
+        "requestBody": {
+          "description": "the example may not be validate becausethe access token change bu google auth",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/googleAuth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "all Publication"
+          },
+          "400": {
+            "description": "Missing data (title or description)"
+          },
+          "401": {
+            "description": "unthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "ayoubjemai@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "jemai2003"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "UserInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "nameChange"
+          },
+          "email": {
+            "type": "string",
+            "example": "emailChange@gmail.com"
+          },
+          "photo": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "UserSignUp": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "admin"
+          },
+          "email": {
+            "type": "string",
+            "example": "ayoubjemai@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "admin123"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": "admin123"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          }
+        },
+        "required": ["email", "confirmPassword", "username", "password"]
+      },
+      "userModified": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "modiedName"
+          },
+          "email": {
+            "type": "string",
+            "example": "modied@ﬁmail.com",
+            "description": "should be unique"
+          }
+        }
+      },
+
+      "forgortPassword": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "ayoubjemai100@gmail.com"
+          }
+        },
+        "required": ["email"]
+      },
+      "restPassword": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "newPassword123"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": "newPassword123"
+          }
+        }
+      },
+      "googleAuth": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "example": "ya29.a0AWY7CklmGAIFzeMWAo4sGlJY7pOjMEY38utw6VM3A0sr-6YpBWu7pxpfUYdm6VjEzk7O3wLfJ7uETQ-r1tOk_yKGfWsCSshYpW6WEiuBViLwqVHxZPW93j2wYfejt7uiskHq6JVAeIIjvBKME1cLunu_0gFfEwaCgYKAaYSARASFQG1tDrpnMYI6c4v5t4nm8evbIxLiA0165"
+          }
+        }
+      },
+      "refresh": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "description": "you can send the refresh token either in cookies or in the header or in the body just `send it in one place`",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

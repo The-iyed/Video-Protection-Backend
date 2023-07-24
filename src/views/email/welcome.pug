@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  h2 Hi #{firstName},
+  p WELCOME🎉🙏
+  p Thank you for signing up for our service! We are excited to have you on board and look forward to helping you... As a new member, you will have access to all of our features and resources. Once again, welcome to our community!
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') lets get started
+  p if you have any questions or concerns, please do not hesitate to reach out to our support We are here to help you every step of the way.
+  p - Softylines, Your future is in our code lines ! 

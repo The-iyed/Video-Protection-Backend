@@ -1,0 +1,7 @@
+node_modules
+build
+# node_modules/jsonwebtoken/lib/TokenExpiredError.js L:7:3:
+#   this.stausCode= 401
+temp
+
+public/video/*
